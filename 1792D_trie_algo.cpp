@@ -2,59 +2,70 @@
 using namespace std;
 
 struct node {
-	bool avail;
-	node *letters[26];
+	node* numbers[11];
+	node() {
+		for(int i = 0; i <= 10; i++) {
+			numbers[i] = NULL;
+		}
+	}
 };
 
-int alpha(char a) {
-	return a - 'a';
-}
-
-node* createNode() {
-	node *p = new node;
-	for(int i = 0; i < 26; i++) {
-		p -> letters[i] = NULL;
-	}
-	p -> avail = false;
-	return p;
-}
-
-void addNode(string& s, node *root) {
-	node *p = root;
-	for(int i = 0; i < s.size(); i++) {
-		if(p -> letters[ alpha(s[i]) ] == NULL) {
-			p -> letters[ alpha(s[i]) ] = createNode();
+void insertVecc(vector<int> vec, node* root) {
+	node* ptr = root;
+	for(int i = 0; i < vec.size(); i++) {
+		if(ptr -> numbers[vec[i]] == NULL) {
+			ptr -> numbers[vec[i]] = new node;
 		}
-		
-		p = p -> letters[ alpha(s[i]) ];
+		ptr = ptr -> numbers[vec[i]];
 	}
 }
 
-int longestTienTo(string& s, node *root) {
+int res(vector<int> vec, node* root) {
 	node* p = root;
-	
-	for(int i = 0; i < s.size(); i++) {
-		if(p -> letters[ alpha(s[i]) ] == NULL) {
-			return i;
+	for(int i = 0; i < vec.size(); i++) {
+		if(p -> numbers[vec[i]] == NULL) {
+			return i - 1;
 		}
-	
-		p = p -> letters[ alpha(s[i]) ];
+		p = p -> numbers[vec[i]];
 	}
-	return s.size();
+	return vec.size() - 1;
 }
 
 int main() {
-	ios_base:: sync_with_stdio(0); cin.tie(NULL);
-
-	node *rootMain = createNode();
-
-	string s2, s1;
-
+	ios_base:: sync_with_stdio(0); cin.tie(0); cout.tie(0);
 	int tc; cin >> tc;
+	int n, m;
+
+	
+	vector< vector<int> > mainPermuations;
+	vector<int> temp;
+	vector<int> perms;
+	int cinTemp;
+
+
 	while(tc--) {
-		cin >> s2;
-		addNode(s2, rootMain);
+		cin >> n >> m;	
+		node* rootMain = new node;
+		mainPermuations = vector < vector <int> > ();
+		for(int i = 1; i <= n; i++) {
+			temp = vector<int>(m + 1, 0);
+			perms = vector<int>();
+			perms.push_back(0);
+			for(int j = 1; j <= m; j++) {
+				cin >> cinTemp;
+				temp[cinTemp] = j;
+				perms.push_back(cinTemp);
+			}
+			mainPermuations.push_back(perms);
+			insertVecc(temp, rootMain);
+		}
+		for(int i = 0; i < n; i++) {
+			cout << res(mainPermuations[i], rootMain) << ' ';
+			// for(auto& k : mainPermuations[i]) {
+			// 	cout << k << ' ';
+			// }
+			// cout << '\n';
+		}
+		cout << '\n';
 	}
-	cin >> s1;
-	cout << longestTienTo(s1, rootMain);
 }
